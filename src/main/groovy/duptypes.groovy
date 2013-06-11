@@ -7,10 +7,33 @@ if (args.length != 1) {
     return 1
 }
 
-vCardFile = new File(args[0])
-vCardReader = new VCardReader(vCardFile)
-VCard vCard = null
-while ((vcard = vCardReader.readNext()) != null) {
-    println(vcard.write())
+def vCardFile = new File(args[0])
+def vCardReader = new VCardReader(vCardFile)
+
+while ((vCard = vCardReader.readNext()) != null) {
+    println(vCard.write())
+
+    // [ 'TEL' : [ 'HOME', 'CELL' ] ]
+    def typeToSubTypeList = [:]
+
+    def i = vCard.iterator()
+    while (i.hasNext()) {
+        
+        def vCardType = i.next()
+        def vCardSubTypes = vCardType.getSubTypes()
+        
+        if (!vCardSubTypes.isEmpty()) {
+            if (typeToSubTypeList.containsKey(vCardType.getTypeName())) {
+                // TODO append all subtypes to existing list
+            } else {
+                // TODO add all subtypes, not just first one
+                typeToSubTypeList[vCardType.getTypeName()] = [vCardType.getSubTypes().getType()]
+            }
+        }
+        
+    }
+
+    println(typeToSubTypeList)
 }
+
 vCardReader.close()
