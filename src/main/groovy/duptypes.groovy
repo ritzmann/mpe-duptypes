@@ -13,27 +13,40 @@ def vCardReader = new VCardReader(vCardFile)
 while ((vCard = vCardReader.readNext()) != null) {
     println(vCard.write())
 
-    // [ 'TEL' : [ 'HOME', 'CELL' ] ]
-    def typeToSubTypeList = [:]
+    // [ 'TEL' : 'HOME', 'TEL' : 'CELL ]
+    def typeToSubType = [:]
 
-    def i = vCard.iterator()
-    while (i.hasNext()) {
-        
-        def vCardType = i.next()
-        def vCardSubTypes = vCardType.getSubTypes()
-        
-        if (!vCardSubTypes.isEmpty()) {
-            if (typeToSubTypeList.containsKey(vCardType.getTypeName())) {
-                // TODO append all subtypes to existing list
-            } else {
-                // TODO add all subtypes, not just first one
-                typeToSubTypeList[vCardType.getTypeName()] = [vCardType.getSubTypes().getType()]
+    for (vCardType in vCard) {
+        for (vCardSubType in vCardType.getSubTypes()) {
+            
+            def vCardTypeName = vCardType.getTypeName();
+            
+            if ("TYPE".equals(vCardSubType.key)) {
+                
+                def vCardSubTypeName = vCardSubType.value[0]
+                
+                if (typeToSubType.containsKey(vCardTypeName)) {
+                    
+                    def vCardSubTypeNames = typeToSubType[vCardTypeName]
+                    
+                    if (vCardSubTypeName in vCardSubTypeNames) {
+                        println("Found duplicate type " + vCardTypeName + " with parameter " + vCardSubTypeName)
+                    } else {
+                        typeToSubType[vCardTypeName] = vCardSubTypeNames << vCardSubTypeName
+                    }
+                    
+                } else {
+                    
+                    typeToSubType[vCardTypeName] = [ vCardSubTypeName ]
+                    
+                }
+                
             }
+            
         }
-        
     }
 
-    println(typeToSubTypeList)
+    println(typeToSubType)
 }
 
 vCardReader.close()
