@@ -11,9 +11,8 @@ def vCardFile = new File(args[0])
 def vCardReader = new VCardReader(vCardFile)
 
 while ((vCard = vCardReader.readNext()) != null) {
-    println(vCard.write())
 
-    // [ 'TEL' : 'HOME', 'TEL' : 'CELL ]
+    // [ 'TEL' : [ 'HOME', 'CELL' ] ]
     def typeToSubType = [:]
 
     for (vCardType in vCard) {
@@ -30,7 +29,13 @@ while ((vCard = vCardReader.readNext()) != null) {
                     def vCardSubTypeNames = typeToSubType[vCardTypeName]
                     
                     if (vCardSubTypeName in vCardSubTypeNames) {
-                        println("Found duplicate type " + vCardTypeName + " with parameter " + vCardSubTypeName)
+                        if (vCard.getStructuredName().getGiven() != null || vCard.getStructuredName().getFamily() != null) {
+                            println(vCard.getStructuredName().getGiven() + " " + vCard.getStructuredName().getFamily() + 
+                                    ": Duplicate type " + vCardTypeName + " with parameter " + vCardSubTypeName)
+                        } else {
+                            println(vCard.getOrganization().getValues()[0] + 
+                                    ": Duplicate type " + vCardTypeName + " with parameter " + vCardSubTypeName)
+                        }
                     } else {
                         typeToSubType[vCardTypeName] = vCardSubTypeNames << vCardSubTypeName
                     }
@@ -40,13 +45,9 @@ while ((vCard = vCardReader.readNext()) != null) {
                     typeToSubType[vCardTypeName] = [ vCardSubTypeName ]
                     
                 }
-                
             }
-            
         }
     }
-
-    println(typeToSubType)
 }
 
 vCardReader.close()
