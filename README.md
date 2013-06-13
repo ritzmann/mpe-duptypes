@@ -11,9 +11,11 @@ duptypes.groovy searches all contacts managed by MyPhoneExplorer and lists the c
 How to use
 ==========
 * Sync your phone with MyPhoneExplorer.
-* From the contacts view in MyPhonExplorer, press the right mouse button and choose to export all contacts.
+* From the contacts view in MyPhoneExplorer, press the right mouse button and choose to export all contacts.
 * Store the exported contacts in vCard format.
 * Run the script with
+        ```
         groovy duptypes.groovy D:\path\to\file.vcard
+        ```
 
 The script will print the names of all contacts that have multiple entries of the same type. You can then edit these contacts in MyPhoneExplorer and sync again.
