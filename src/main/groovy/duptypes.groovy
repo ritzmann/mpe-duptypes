@@ -1,3 +1,4 @@
+@Grab(group='com.googlecode.ez-vcard', module='ez-vcard', version='0.8.1')
 import ezvcard.Ezvcard
 import ezvcard.VCard
 import ezvcard.io.VCardReader
